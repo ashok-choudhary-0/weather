@@ -15,6 +15,7 @@ function gotLocation(position) {
 
   async function currentLocationData() {
     try {
+      document.getElementById('image').src = "loader.gif";
       const res = await fetch(apiUrl);
       const data = await res.json();
       const tempInCalvin = data.main?.temp;
@@ -44,13 +45,16 @@ const helperFunction = (city) => {
   return `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=82005d27a116c2880c8f0fcb866998a0`
 }
 
-const handleSearch = async () => {
-  let data;
+// const handleSearch = async () => {
+async function handleSearch() {
+  var data;
+  // document.getElementById("error").style.display = "none"
 
-  var lo = document.getElementById("latitude").value
-  console.log(lo)
 
   try {
+    document.getElementById('image').src = "loader.gif";
+    document.getElementById("weatherContainer").style.display = "flex"
+    document.getElementById("error").style.display = "none"
     let inputValue = document.getElementById("input").value;
     const response = await fetch(helperFunction(inputValue));
     data = await response.json();
@@ -86,13 +90,21 @@ const handleSearch = async () => {
     }
 
   } catch (err) {
-    console.log(err);
+    document.getElementById('image').src = "loader.gif";
     document.getElementById("weatherContainer").style.display = "none"
     document.getElementById("error").style.display = "flex"
     document.getElementById("error").innerHTML = "City not Found 	&#128557;"
 
+
+
+
   }
 }
+
+// handleSearch();
+
+
+
 
 
 
