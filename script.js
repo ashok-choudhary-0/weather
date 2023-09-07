@@ -1,3 +1,45 @@
+
+function Location() {
+  navigator.geolocation.getCurrentPosition(gotLocation);
+}
+
+Location();
+
+function gotLocation(position) {
+
+  const latitude = position.coords.latitude
+  const longitude = position.coords.longitude
+
+  const apiKey = "82005d27a116c2880c8f0fcb866998a0";
+  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}`;
+
+  async function currentLocationData() {
+    try {
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+      const tempInCalvin = data.main?.temp;
+      let tempInDegree = tempInCalvin - 273.15;
+      tempInDegree = Math.round(tempInDegree);
+      const iconCode = data.weather[0]?.icon;
+      const iconUrl = `https://openweathermap.org/img/w/${iconCode}.png`;
+      document.getElementById('image').src = iconUrl;
+      document.getElementById("desc").innerHTML = data.weather[0]?.description
+      document.getElementById("address").innerHTML = data?.name + ", ";
+      document.getElementById("country").innerHTML = data?.sys.country;
+      document.getElementById("temperature").innerHTML = tempInDegree + "°c";
+
+
+    } catch (err) {
+      console.log(err)
+    }
+
+  }
+  currentLocationData();
+}
+
+
+
+
 const helperFunction = (city) => {
   return `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=82005d27a116c2880c8f0fcb866998a0`
 }
@@ -5,12 +47,13 @@ const helperFunction = (city) => {
 const handleSearch = async () => {
   let data;
 
+  var lo = document.getElementById("latitude").value
+  console.log(lo)
+
   try {
     let inputValue = document.getElementById("input").value;
-    inputValue = (inputValue === "") ? "noida" : inputValue;
     const response = await fetch(helperFunction(inputValue));
     data = await response.json();
-
 
     const tempInCalvin = data.main?.temp;
     let tempInDegree = tempInCalvin - 273.15;
@@ -23,7 +66,7 @@ const handleSearch = async () => {
     document.getElementById("country").innerHTML = data?.sys.country;
     document.getElementById("temperature").innerHTML = tempInDegree + "°c";
     let timezone = data?.dt;
-    console.log(data)
+
 
 
 
@@ -42,10 +85,6 @@ const handleSearch = async () => {
       document.getElementById('container').style.background = "white"
     }
 
-
-
-
-
   } catch (err) {
     console.log(err);
     document.getElementById("weatherContainer").style.display = "none"
@@ -54,5 +93,13 @@ const handleSearch = async () => {
 
   }
 }
-handleSearch();
+
+
+
+
+
+
+
+
+
 
