@@ -1,9 +1,22 @@
 
-function Location() {
+function userLocation() {
   navigator.geolocation.getCurrentPosition(gotLocation);
 }
 
-Location();
+userLocation();
+
+function dynamicUiData(data) {
+  const tempInCalvin = data.main?.temp;
+  let tempInDegree = tempInCalvin - 273.15;
+  tempInDegree = Math.round(tempInDegree);
+  const iconCode = data.weather[0]?.icon;
+  const iconUrl = `https://openweathermap.org/img/w/${iconCode}.png`;
+  document.getElementById('image').src = iconUrl;
+  document.getElementById("desc").innerHTML = data.weather[0]?.description
+  document.getElementById("address").innerHTML = data?.name + ", ";
+  document.getElementById("country").innerHTML = data?.sys.country;
+  document.getElementById("temperature").innerHTML = tempInDegree + "°c";
+}
 
 function gotLocation(position) {
 
@@ -18,16 +31,7 @@ function gotLocation(position) {
       document.getElementById('image').src = "loader.gif";
       const res = await fetch(apiUrl);
       const data = await res.json();
-      const tempInCalvin = data.main?.temp;
-      let tempInDegree = tempInCalvin - 273.15;
-      tempInDegree = Math.round(tempInDegree);
-      const iconCode = data.weather[0]?.icon;
-      const iconUrl = `https://openweathermap.org/img/w/${iconCode}.png`;
-      document.getElementById('image').src = iconUrl;
-      document.getElementById("desc").innerHTML = data.weather[0]?.description
-      document.getElementById("address").innerHTML = data?.name + ", ";
-      document.getElementById("country").innerHTML = data?.sys.country;
-      document.getElementById("temperature").innerHTML = tempInDegree + "°c";
+      dynamicUiData(data);
 
 
     } catch (err) {
@@ -41,34 +45,21 @@ function gotLocation(position) {
 
 
 
-const helperFunction = (city) => {
+const customApiFunction = (city) => {
   return `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=82005d27a116c2880c8f0fcb866998a0`
 }
 
-// const handleSearch = async () => {
+
 async function handleSearch() {
-  var data;
-  // document.getElementById("error").style.display = "none"
-
-
+  let data;
   try {
     document.getElementById('image').src = "loader.gif";
     document.getElementById("weatherContainer").style.display = "flex"
     document.getElementById("error").style.display = "none"
     let inputValue = document.getElementById("input").value;
-    const response = await fetch(helperFunction(inputValue));
+    const response = await fetch(customApiFunction(inputValue));
     data = await response.json();
-
-    const tempInCalvin = data.main?.temp;
-    let tempInDegree = tempInCalvin - 273.15;
-    tempInDegree = Math.round(tempInDegree);
-    const iconCode = data.weather[0]?.icon;
-    const iconUrl = `https://openweathermap.org/img/w/${iconCode}.png`;
-    document.getElementById('image').src = iconUrl;
-    document.getElementById("desc").innerHTML = data.weather[0]?.description
-    document.getElementById("address").innerHTML = data?.name + ", ";
-    document.getElementById("country").innerHTML = data?.sys.country;
-    document.getElementById("temperature").innerHTML = tempInDegree + "°c";
+    dynamicUiData(data);
     let timezone = data?.dt;
 
 
@@ -94,14 +85,9 @@ async function handleSearch() {
     document.getElementById("weatherContainer").style.display = "none"
     document.getElementById("error").style.display = "flex"
     document.getElementById("error").innerHTML = "City not Found 	&#128557;"
-
-
-
-
   }
 }
 
-// handleSearch();
 
 
 
