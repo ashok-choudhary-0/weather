@@ -17,8 +17,7 @@ function dynamicUiData(data) {
   let tempInDegree = tempInCalvin - 273.15;
   tempInDegree = Math.round(tempInDegree);
   const iconCode = data.weather[0]?.icon;
-  const iconUrl = `https://openweathermap.org/img/w/${iconCode}.png`;
-  document.getElementById('image').src = iconUrl;
+  document.getElementById('image').src = `icons/${iconCode}.png`;
   document.getElementById("desc").innerHTML = data.weather[0]?.description
   document.getElementById("address").innerHTML = data?.name + ", ";
   document.getElementById("country").innerHTML = data?.sys.country;
