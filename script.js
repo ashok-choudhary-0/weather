@@ -2,8 +2,15 @@
 function userLocation() {
   navigator.geolocation.getCurrentPosition(gotLocation);
 }
-
 userLocation();
+
+async function apiData(input) {
+  let apiKey = "82005d27a116c2880c8f0fcb866998a0";
+  let url = (typeof (input) === "string") ? `https://api.openweathermap.org/data/2.5/weather?q=${input}&appid=${apiKey}` : `https://api.openweathermap.org/data/2.5/weather?lat=${input[0]}&lon=${input[1]}&appid=${apiKey}`
+  const res = await fetch(url);
+  const data = await res.json();
+  return data;
+}
 
 function dynamicUiData(data) {
   const tempInCalvin = data.main?.temp;
@@ -19,57 +26,43 @@ function dynamicUiData(data) {
 }
 
 function gotLocation(position) {
-
+  let arr = [];
   const latitude = position.coords.latitude
   const longitude = position.coords.longitude
-
-  const apiKey = "82005d27a116c2880c8f0fcb866998a0";
-  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}`;
+  arr.push(latitude);
+  arr.push(longitude);
 
   async function currentLocationData() {
     try {
       document.getElementById('image').src = "loader.gif";
-      const res = await fetch(apiUrl);
-      const data = await res.json();
+      const data = await apiData(arr);
       dynamicUiData(data);
-
-
     } catch (err) {
       console.log(err)
     }
-
   }
   currentLocationData();
 }
-
-
-
 
 const customApiFunction = (city) => {
   return `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=82005d27a116c2880c8f0fcb866998a0`
 }
 
-
 async function handleSearch() {
-  let data;
   try {
     document.getElementById('image').src = "loader.gif";
     document.getElementById("weatherContainer").style.display = "flex"
     document.getElementById("error").style.display = "none"
     let inputValue = document.getElementById("input").value;
-    const response = await fetch(customApiFunction(inputValue));
-    data = await response.json();
+    const data = await apiData(inputValue)
+
     dynamicUiData(data);
     let timezone = data?.dt;
-
-
-
 
     if (timezone >= 1694006253 && timezone <= 1694063100) {
       document.getElementById("container").style.background = "black";
     } else {
       document.getElementById("container").style.background = "white";
-
     }
 
     if (data?.weather[0].description == "scattered clouds") {
